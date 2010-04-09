@@ -1,0 +1,72 @@
+<!doctype html>
+<html>
+<head>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript">
+var bkg = chrome.extension.getBackgroundPage();
+var msgCount = 0;
+var waves = bkg.getWaves();
+
+if(waves == null || waves.length == 0 || bkg.settings.hidePreviewBox) {
+    window.close();
+	bkg.goHome();
+	bkg.updateWaves();
+}
+
+
+function loadWaves() {
+	var waves = bkg.getWaves();
+	$('#messages').empty();
+	if(waves && waves.length > 0) {
+		msgCount = waves.length;
+		$(waves).each(function(i) {
+		  var last = '';
+			if (i+1 == waves.length) last = 'last';
+			if (i+1 == 5 ) {
+			    var t = waves.length - 4;
+				$("#messages")
+					.append('<div class="message last title more">You have '+t+' more unread Waves. <a href="javascript:;" onclick="bkg.goHome();">Go read them.</a></div>')
+			} else {
+				if (i+1 < 5 ) {
+					$("#messages")
+						.append($('<div class="message '+last+'" onclick="openURI(\''+this.id+'\');"></div>')
+							.append('<div class="title">'+this.subject.substr( 0, 50 )+'</div>')
+							.append('<div class="body">'+this.snippet.substr( 0, 150 )+'</div>')
+							.append($('<footer></footer>')
+								.append('<span class="author">'+this.unread+'/'+this.total+'</span>'))
+							);
+				}
+			} 
+		});
+	} else {
+		window.close();
+	} 
+}
+
+$(loadWaves);
+
+function openURI(wid) {
+	window.close();
+    var uri = bkg.getWaveUrl(wid);
+	bkg.goToMessage(uri);
+}
+
+function reload() {
+	$('#refresh').text("Refreshing...");
+    $('#refresh').fadeIn('fast');
+	bkg.updateWaves(function(count) {
+		if (count != msgCount)
+			loadWaves();
+		$('#refresh').text("Refreshed!");
+		$('#refresh').fadeOut(3000);
+	});
+}
+</script>
+<link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+<body>
+<span id="refresh">Refreshing...</span>
+<header><span class="left"><a href="javascript:;" id="reload" onclick="reload();"><img src="images/refresh.png" width="20px;"></a> <a href="javascript:;" id="home" onclick="bkg.goHome();"><img src="images/open.png" width="20px;"></a></span><span class="right"><a href="javascript:;" id="home" onclick="bkg.goOptions();"><img src="images/settings.png" width="20px;"></a></span></header>
+<section class="messages" id="messages"></section>
+</body>
+</html>

@@ -1,0 +1,233 @@
+<!doctype html> 
+<html> 
+<head> 
+<meta charset="utf-8"> 
+<title>Notifier for Google Wave - Options</title>
+<link rel="shortcut icon" HREF="icon_16.png"> 
+<link rel="stylesheet" type="text/css" href="options.css">
+<script type="text/javascript" src="jquery.js"></script>
+<script> 
+var bkg = chrome.extension.getBackgroundPage();
+
+// Saves options to localStorage.
+function save_options() {
+	bkg.settings.pollInterval = parseInt($('#refresh').val()) * 60000;
+	bkg.settings.timeout = 1000 * 15;
+	bkg.settings.appsDomain = $('#apps_domain_value').val();
+  bkg.settings.popupNotification = $('#popupNotification')[0].checked;
+  bkg.settings.soundNotification = $('#soundNotification')[0].checked;
+	bkg.settings.hideNavBox = $('#hideNavBox')[0].checked;
+	bkg.settings.hideContactsBox = $('#hideContactsBox')[0].checked;
+	bkg.settings.hideSearchBox = $('#hideSearchBox')[0].checked;
+	bkg.settings.hidePreviewBox = $('#hidePreviewBox')[0].checked;
+    var iconRadios = document.forms[0].icon_set;
+    for(var i in iconRadios) {
+        if(iconRadios[i].checked) {
+            bkg.settings.iconsSet = iconRadios[i].value;
+            break;
+        }
+    }
+	refresh_extension();
+
+	$('#options_saved').fadeIn('fast');
+	$('#options_saved').fadeOut(3000);
+}
+
+// Restores select box state to saved value from localStorage.
+$(function() {
+	$('#refresh').val(bkg.settings.pollInterval / 60000);
+	//$('#timeout').val(bkg.settings.timeout / 1000);
+	$('#apps_domain_value').val(bkg.settings.appsDomain);
+  $('#popupNotification')[0].checked = bkg.settings.popupNotification;
+  if(bkg.settings.popupNotification) {
+		$('#notifications_text').show();
+	} else {
+		$('#notifications_text').hide();
+	}
+  $('#soundNotification')[0].checked = bkg.settings.soundNotification;
+	$('#hideNavBox')[0].checked = bkg.settings.hideNavBox;
+	$('#hideContactsBox')[0].checked = bkg.settings.hideContactsBox;
+	$('#hideSearchBox')[0].checked = bkg.settings.hideSearchBox;
+	$('#hidePreviewBox')[0].checked = bkg.settings.hidePreviewBox;
+
+	if(bkg.settings.appsDomain == "") {
+		$('#apps_domain_check')[0].checked = "";
+		$('#apps_domain_value_text').hide();
+	} else {
+		$('#apps_domain_check')[0].checked = "checked";
+		$('#apps_domain_value').val(bkg.settings.appsDomain);
+		$('#apps_domain_value_text').show();
+	}
+
+	var iconRadios = document.forms[0].icon_set;
+    var iconFound = false;
+    for(var i in iconRadios) {
+        if(iconRadios[i].value == bkg.settings.iconsSet) {
+            iconRadios[i].checked = true;
+            iconFound = true;
+            break;
+        }
+    }
+  print_perm();
+});
+
+function print_perm(){
+  var perm = webkitNotifications.checkPermission();
+  if(perm == 0) {
+      document.getElementById('notification_permission').innerHTML = 'are activated';
+      document.getElementById('notification_permission').style.color = 'green';
+      document.getElementById('request').style.display = "none";
+  } else if(perm == 1) {
+      document.getElementById('notification_permission').innerHTML = 'are not activated';
+      document.getElementById('notification_permission').style.color = 'orange';
+      document.getElementById('request').style.display = "";
+  } else if(perm == 2) {
+      document.getElementById('notification_permission').innerHTML = 'are forbidden';
+      document.getElementById('notification_permission').style.color = 'red';
+      document.getElementById('request').style.display = "";
+  }
+}
+
+function toggle_popup() {
+  var perm = webkitNotifications.checkPermission();
+  if(perm == 0) {
+      document.getElementById('notification_permission').innerHTML = 'are activated';
+      document.getElementById('notification_permission').style.color = 'green';
+      document.getElementById('request').style.display = "none";
+  } else if(perm == 1) {
+      document.getElementById('notification_permission').innerHTML = 'are not activated';
+      document.getElementById('notification_permission').style.color = 'orange';
+      document.getElementById('request').style.display = "";
+  } else if(perm == 2) {
+      document.getElementById('notification_permission').innerHTML = 'are forbidden';
+      document.getElementById('notification_permission').style.color = 'red';
+      document.getElementById('request').style.display = "";
+  }
+	$('#notifications_text').toggle();
+}
+
+// Toggle display of input text for apps domain based on checkbox state.
+function toggle_appsdomain() {
+	$('#apps_domain_value_text').toggle();
+  $('#apps_domain_value').val('');
+}
+
+// Refresh the extension by reseting timer.
+function refresh_extension() {
+	bkg.refresh(); 
+}
+</script>
+</head> 
+<body> 
+  <form onsubmit="return false;">
+  <div id="body-container"> 
+ 
+    <div id="header"><h1>Notifier for Google Wave</h1></div> 
+ 
+    <div id="extensionTemplate"> 
+ 
+      <div id="container" class="vbox-container"> 
+        <div id="top" class="wbox" style="padding-right: 5px"> 
+   
+          <div class="section-header"> 
+            <table cellpadding="0" cellspacing="0" width="100%"> 
+            <tr valign="center"> 
+              <td> 
+                <span class="section-header-title">Options</span> 
+              </td> 
+            </tr> 
+            </table> 
+          </div> 
+   
+        </div> 
+      
+        <div id="developer_tools" class="wbox-dev-mode showInDevMode"> 
+          <div class="developer-mode"> 
+            General
+          </div> 
+        </div>
+        
+        <div class="developer-mode-content">
+          Refresh Rate: <select id="refresh"> 
+                <option value="1">1 minute</option> 
+                <option value="5">5 minutes</option> 
+                <option value="10">10 minutes</option> 
+                <option value="15">15 minutes</option> 
+                <option value="20">20 minutes</option> 
+                <option value="25">25 minutes</option> 
+                <option value="30">30 minutes</option> 
+              </select> 
+        </div>
+
+        <div id="developer_tools" class="wbox-dev-mode showInDevMode"> 
+          <div class="developer-mode-top"> 
+            Notifications
+          </div> 
+        </div>
+
+        <div class="developer-mode-content">
+          Enable popup notifications: <input id="popupNotification" type="checkbox" onclick="toggle_popup();"> <span id="notifications_text" style="display:none;">Notifications <span id="notification_permission">are not supported yet in your browser</span>.&nbsp;<span id="request" style="display:none;">&nbsp;<button onclick="webkitNotifications.requestPermission(print_perm);" type="button" class="btn">Activate notifications</button></span></span><br/>
+          Enable sound notifications: <input id="soundNotification" type="checkbox">
+        </div>
+
+        <div id="developer_tools" class="wbox-dev-mode showInDevMode"> 
+          <div class="developer-mode-top"> 
+            When opening Google Wave
+          </div> 
+        </div>
+
+        <div class="developer-mode-content">
+           Hide nav box: <input id="hideNavBox" type="checkbox"><br/>
+           Hide contacts box: <input id="hideContactsBox" type="checkbox"><br/>
+           Hide search box: <input id="hideSearchBox" type="checkbox"><br/>
+           Don't show preview popup of unread waves: <input id="hidePreviewBox" type="checkbox">
+        </div>
+
+        <div id="developer_tools" class="wbox-dev-mode showInDevMode"> 
+          <div class="developer-mode-top"> 
+            Google Apps
+          </div> 
+        </div>
+
+        <div class="developer-mode-content">
+          Activate: <input type="checkbox" id="apps_domain_check" onclick="toggle_appsdomain();"/><br/>
+          <span id="apps_domain_value_text" style="display:none;">Domain: https://wave.google.com/a/<input id="apps_domain_value" type="text" placeholder="yourdomain.com" value=""/>/</span>
+        </div>
+
+        <div id="developer_tools" class="wbox-dev-mode showInDevMode"> 
+          <div class="developer-mode-top"> 
+            Icons
+          </div> 
+        </div>
+
+        <div class="developer-mode-content">
+          <span><input type="radio" name="icon_set" value="set1" /><img src="/icons/set1/not_logged_in.png" /><img src="icons/set1/no_new.png" /><img src="icons/set1/new.png" /></span><br /> 
+				  <span><input type="radio" name="icon_set" value="set2" /><img src="/icons/set2/not_logged_in.png" /><img src="icons/set2/no_new.png" /><img src="icons/set2/new.png" /></span><br /> 
+				  <span><input type="radio" name="icon_set" value="set3" /><img src="/icons/set3/not_logged_in.png" /><img src="icons/set3/no_new.png" /><img src="icons/set3/new.png" /></span><br /> 
+        </div>
+      
+      </div> 
+ 
+      <div class="content"> 
+        
+        <div class="extension" jsselect="extensions"> 
+          <table width="100%" cellpadding="2" cellspacing="0"> 
+          <tr> 
+			  <td width="62" height="50" align="center" valign="top"> </td> 
+			  <td valign="top"> </td> 
+			  <td width="100"> </td> 
+			  <td align="right" valign="center" width="700"> 
+			      <span id="options_saved" class="info-message" style="display:none;">Options saved! The extension has been refreshed.</span> <button onclick="save_options();">Save</button> <button onclick="refresh_extension();">Refresh extension</button> <button onclick="window.close();">Close</button>
+			  </td> 
+          </tr> 
+          </table> 
+        </div> 
+        
+        <div id="get-moar-extensions">by <a href="http://www.jeremyselier.com">Jeremy Selier</a>, with the help of <a href="http://www.google.com/profiles/artiom.chi">Artiom Chilaru</a> and Joakim Andersson - <a href="">Source code licensed under the Apache License.</a></div> 
+		    <div class="credits">Some icons by <a href="http://desc.se/">destructoBOT</a>, some others thanks to <a href="http://midgardination.deviantart.com/art/iChrome-Icon-Template-138927254">Midgardination</a></div>
+      </div> 
+    </div> 
+  </div> 
+  </form>
+  </body> 
+</html> 

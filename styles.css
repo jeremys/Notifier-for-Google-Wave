@@ -1,0 +1,102 @@
+body {
+	padding: 0px;
+	margin: 0px;
+	width: 300px;
+	overflow: hidden;
+}
+
+header {
+    display: block;
+    width: 300px;
+	border-bottom: 1px #E7E7E7 solid;
+	height: 25px;
+	padding: 0px;
+	margin: 0px;
+	padding-top: 5px;
+}
+
+header .left {
+	float: left;
+	padding-left: 5px;
+}
+
+header .right {
+	float: right;
+	padding-right: 5px;
+}
+
+.message {
+	margin: 10px 0px 0px;
+	padding-bottom: 10px;
+	background: url(images/background.png) repeat-x bottom;
+	border:2px solid #FFFFFF;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
+}
+
+.message:hover {
+	border:2px solid #5590D2;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
+	cursor: pointer;
+}
+
+.last {
+	border: 2px #FFFFFF solid;
+}
+
+.title {
+    color: #222222;
+	font-weight: bold;
+	font-size: 12px;
+	font-family: Arial, Helvetica;
+	padding-left: 5px;
+}
+
+.more {
+	font-size: 11px;
+	font-weight: normal;
+	background: none !important;
+	text-align:center;
+}
+
+.more:hover {
+	border: 2px #FFFFFF solid !important;
+	cursor: default !important;
+}
+
+
+.more a {
+	color: black;
+}
+
+.body {
+    color: #323232;
+	font-weight: normal;
+	font-size: 10px;
+	font-family: Arial, Helvetica;
+	padding: 5px 10px;
+}
+
+footer {
+    color: #323232;
+	font-weight: bold;
+	font-size: 10px;
+	font-family: Arial, Helvetica;
+	padding: 5px 10px;
+}
+
+#refresh {
+	background: #FDFFBD none repeat scroll 0 0;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    padding: 3px 10px 4px;
+    font-family: Arial, Helvetica;
+	color: #222222;
+	font-weight: normal;
+	font-size: 10px;
+	position: absolute;
+	left: 54px;
+	top: 5px;
+	display: none;
+}
